@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import cors from "cors"; // Importation du package CORS
 import express, { Request, Response } from "express";
 import path from "path";
 
@@ -22,6 +23,13 @@ interface Denonciation {
   name: string;
   mots_cles: string[];
 }
+
+// Utilisation du middleware CORS pour autoriser uniquement ton front-end
+app.use(
+  cors({
+    origin: "https://poukaves.vercel.app", // Permet uniquement à ce front-end d'accéder à l'API
+  })
+);
 
 app.use(express.json());
 
