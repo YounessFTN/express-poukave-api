@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="https://www.svgrepo.com/show/327408/logo-vercel.svg"
+      type="image/gif"
+      sizes="16x16"
+    />
+    <title>API Documentation</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #94a3b8;
+      font-family: "Inter", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    h1 {
+      color: #f1f5f9;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      font-weight: 700;
+    }
+    h2 {
+      color: #f1f5f9;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+    a {
+      text-decoration: none;
+      border-bottom: white 2px solid;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 3rem;
+      gap: 1.5rem;
+    }
+
+    .tech-stack-title {
+      color: #f1f5f9;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .images {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .tech-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tech-item img {
+      width: 48px;
+      height: 48px;
+      transition: transform 0.3s ease;
+      filter: grayscale(20%);
+    }
+
+    .tech-item:hover img {
+      transform: translateY(-5px);
+      filter: grayscale(0%);
+    }
+
+    .tech-item span {
+      font-size: 0.875rem;
+      color: #cbd5e1;
+    }
+
+    .endpoints {
+      background-color: #1e293b;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .endpoint {
+      background-color: #334155;
+      border-radius: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      border: 1px solid #475569;
+    }
+
+    .endpoint:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #64748b;
+    }
+
+    .endpoint-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .method {
+      border-radius: 6px;
+      color: #fff;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .method.post {
+      background-color: #0891b2;
+    }
+    .method.get {
+      background-color: #059669;
+    }
+    .method.put {
+      background-color: #d97706;
+    }
+    .method.delete {
+      background-color: #dc2626;
+    }
+
+    .route {
+      color: #e2e8f0;
+      font-weight: 600;
+      font-size: 1.1rem;
+      font-family: "Monaco", monospace;
+    }
+
+    .route a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .route a:hover {
+      color: #60a5fa;
+    }
+
+    .endpoint-description {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .endpoint-details {
+      background-color: #1e293b;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .endpoint:hover .endpoint-details {
+      display: block;
+    }
+
+    .endpoint-details code {
+      background-color: #334155;
+      padding: 0.2rem 0.4rem;
+      border-radius: 0.25rem;
+      color: #60a5fa;
+      font-family: "Monaco", monospace;
+    }
+
+    .social-links {
+      margin-top: 3rem;
+      text-align: center;
+    }
+
+    .social-links p {
+      color: #f1f5f9;
+      font-size: 1.1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .social-links ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .social-links ul li a {
+      color: #cbd5e1;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      background-color: #334155;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-links ul li a:hover {
+      background-color: #475569;
+      transform: translateY(-2px);
+    }
+
+    .social-links img {
+      width: 24px;
+      height: 24px;
+    }
+
+    .clone-button {
+      background-color: #3b82f6;
+      color: #ffffff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s ease;
+    }
+
+    .clone-button:hover {
+      background-color: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    .clone-button svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .endpoints {
+        padding: 1rem;
+      }
+
+      .endpoint {
+        padding: 1rem;
+      }
+
+      .social-links ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+    }
+  </style>
+  <body>
+    <div class="container">
+      <div class="tech-stack">
+        <h2 class="tech-stack-title">Built with</h2>
+        <div class="images">
+          <div class="tech-item">
+            <img
+              src="https://cdn.svgporn.com/logos/vercel-icon.svg"
+              alt="Vercel"
+            />
+            <span>Vercel</span>
+          </div>
+          <div class="tech-item">
+            <img
+              src="https://cdn.svgporn.com/logos/express.svg"
+              alt="Express"
+            />
+            <span>Express</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.svgporn.com/logos/prisma.svg" alt="Prisma" />
+            <span>Prisma</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.svgporn.com/logos/neon-icon.svg" alt="Neon" />
+            <span>Neon</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="endpoints">
+        <h1>API Documentation</h1>
+
+        <!-- User Endpoints -->
+        <h2>Route Users</h2>
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <a href="https://express-vercel-api-six.vercel.app/users">
+              <span class="route">/users</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Create a new user</p>
+          <div class="endpoint-details">
+            <p>
+              Body:
+              <code
+                >{ "name": "string", "email": "string", "password": "string"
+                }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/users">
+              <span class="route">/users</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get the list of all users</p>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/users/1">
+              <span class="route">/users/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get a specific user by ID</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <a href="https://express-vercel-api-six.vercel.app/users/1">
+              <span class="route">/users/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Update a user</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+            <p>
+              Body:
+              <code
+                >{ "name": "string", "email": "string", "password": "string"
+                }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <a href="https://express-vercel-api-six.vercel.app/users/1">
+              <span class="route">/users/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Delete a user</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+
+        <!-- Blog Endpoints -->
+        <h2>Route Blogs</h2>
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <a href="https://express-vercel-api-six.vercel.app/blogs">
+              <span class="route">/blogs</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Create a new blog post</p>
+          <div class="endpoint-details">
+            <p>
+              Body:
+              <code
+                >{ "title": "string", "content": "string", "authorId": "number",
+                "published": "boolean" }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/blogs">
+              <span class="route">/blogs</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get the list of all blog posts</p>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/blogs/1">
+              <span class="route">/blogs/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get a specific blog post by ID</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <a href="https://express-vercel-api-six.vercel.app/blogs/1">
+              <span class="route">/blogs/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Update a blog post</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+            <p>
+              Body:
+              <code
+                >{ "title": "string", "content": "string", "published":
+                "boolean" }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <a href="https://express-vercel-api-six.vercel.app/blogs/1">
+              <span class="route">/blogs/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Delete a blog post</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+
+        <!-- Manga Endpoints -->
+        <h2>Route Manga</h2>
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <a href="https://express-vercel-api-six.vercel.app/mangas">
+              <span class="route">/mangas</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Create a new manga</p>
+          <div class="endpoint-details">
+            <p>
+              Body:
+              <code
+                >{ "title": "string", "author": "string", "description":
+                "string", "price": "number", "stock": "number" }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/mangas">
+              <span class="route">/mangas</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get the list of all mangas</p>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/mangas/1">
+              <span class="route">/mangas/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get a specific manga by ID</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <a href="https://express-vercel-api-six.vercel.app/mangas/1">
+              <span class="route">/mangas/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Update a manga</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+            <p>
+              Body:
+              <code
+                >{ "title": "string", "author": "string", "description":
+                "string", "price": "number", "stock": "number" }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <a href="https://express-vercel-api-six.vercel.app/mangas/1">
+              <span class="route">/mangas/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Delete a manga</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+
+        <!-- Anime Endpoints -->
+        <h2>Route Animes</h2>
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <a href="https://express-vercel-api-six.vercel.app/animes">
+              <span class="route">/animes</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Create a new anime</p>
+          <div class="endpoint-details">
+            <p>
+              Body:
+              <code
+                >{ "title": "string", "studio": "string", "episodes": "number",
+                "description": "string", "price": "number", "stock": "number"
+                }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/animes">
+              <span class="route">/animes</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get the list of all animes</p>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <a href="https://express-vercel-api-six.vercel.app/animes/1">
+              <span class="route">/animes/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Get a specific anime by ID</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method put">PUT</span>
+            <a href="https://express-vercel-api-six.vercel.app/animes/1">
+              <span class="route">/animes/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Update an anime</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+            <p>
+              Body:
+              <code
+                >{ "title": "string", "studio": "string", "episodes": "number",
+                "description": "string", "price": "number", "stock": "number"
+                }</code
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <div class="endpoint-header">
+            <span class="method delete">DELETE</span>
+            <a href="https://express-vercel-api-six.vercel.app/animes/1">
+              <span class="route">/animes/:id</span>
+            </a>
+          </div>
+          <p class="endpoint-description">Delete an anime</p>
+          <div class="endpoint-details">
+            <p>URL params: <code>id</code> (required)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="social-links">
+        <p>Find me on</p>
+        <ul>
+          <li>
+            <a href="https://github.com/YounessFTN" target="_blank">
+              <img
+                src="https://cdn.svgporn.com/logos/github-icon.svg"
+                alt="GitHub"
+              />
+              GitHub
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.linkedin.com/in/youness-fatine-developpeur-lyon/"
+              target="_blank"
+            >
+              <img
+                src="https://cdn.svgporn.com/logos/linkedin-icon.svg"
+                alt="LinkedIn"
+              />
+              LinkedIn
+            </a>
+          </li>
+        </ul>
+        <a
+          href="https://github.com/YounessFTN/express-vercel-api"
+          class="clone-button"
+        >
+          <svg
+            fill="#ffffff"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M12,2A10,10,0,0,0,8.84,21.5c.5.08.66-.23.66-.5V19.31C6.73,19.91,6.14,18,6.14,18A2.69,2.69,0,0,0,5,16.5c-.91-.62.07-.6.07-.6a2.1,2.1,0,0,1,1.53,1,2.15,2.15,0,0,0,2.91.83,2.16,2.16,0,0,1,.63-1.34C8,16.17,5.62,15.31,5.62,11.5a3.87,3.87,0,0,1,1-2.71,3.58,3.58,0,0,1,.1-2.64s.84-.27,2.75,1a9.63,9.63,0,0,1,5,0c1.91-1.29,2.75-1,2.75-1a3.58,3.58,0,0,1,.1,2.64,3.87,3.87,0,0,1,1,2.71c0,3.82-2.34,4.66-4.57,4.91a2.39,2.39,0,0,1,.69,1.85V21c0,.27.16.59.67.5A10,10,0,0,0,12,2Z"
+            />
+          </svg>
+          Clone the Repository
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
