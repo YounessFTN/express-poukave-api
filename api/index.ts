@@ -27,14 +27,11 @@ interface Denonciation {
 // Utilisation du middleware CORS pour autoriser uniquement ton front-end
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Vérifie si l'origine commence par "https://poukaves.vercel.app"
-      if (!origin || origin.startsWith("https://poukaves.vercel.app")) {
-        callback(null, true); // Autorise l'origine
-      } else {
-        callback(new Error("Not allowed by CORS")); // Refuse l'origine
-      }
-    },
+    origin: [
+      "https://poukaves.vercel.app", // Front-end principal
+      "https://poukaves.vercel.app/denoncer", // Autre URL que tu veux ajouter
+      "https://poukaves.vercel.app/statistiques",
+    ],
   })
 );
 
