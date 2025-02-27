@@ -1,19 +1,37 @@
-const express = require("express");
-const { PrismaClient } = require("@prisma/client");
-const path = require("path");
+import { PrismaClient } from "@prisma/client";
+import express, { Request, Response } from "express";
+import path from "path";
 
 const app = express();
 const prisma = new PrismaClient();
 
+// Types pour les modèles
+interface User {
+  id: number;
+  email: string;
+  password: string;
+  name: string | null;
+}
+
+interface Denonciation {
+  id: number;
+  description: string;
+  categorie: string;
+  localisation: string;
+  date: Date;
+  name: string;
+  mots_cles: string[];
+}
+
 app.use(express.json());
 
 // Route principale
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 // Routes User
-app.post("/users", async (req, res) => {
+app.post("/users", async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   try {
     const user = await prisma.user.create({
@@ -21,283 +39,135 @@ app.post("/users", async (req, res) => {
     });
     res.json(user);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la création de l'utilisateur." });
   }
 });
 
-app.get("/users", async (req, res) => {
+app.get("/users", async (req: Request, res: Response) => {
   try {
-    const users = await prisma.user.findMany({
-      include: { blogs: true },
-    });
+    const users = await prisma.user.findMany();
     res.json(users);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la récupération des utilisateurs." });
   }
 });
 
-app.get("/users/:id", async (req, res) => {
-  const { id } = req.params;
+app.get("/users/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: Number(id) },
-      include: { blogs: true },
-    });
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ error: "User not found" });
-    }
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (user) res.json(user);
+    else res.status(404).json({ error: "Utilisateur non trouvé" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la récupération de l'utilisateur." });
   }
 });
 
-app.put("/users/:id", async (req, res) => {
-  const { id } = req.params;
+app.put("/users/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
   const { name, email, password } = req.body;
   try {
     const user = await prisma.user.update({
-      where: { id: Number(id) },
+      where: { id },
       data: { name, email, password },
     });
     res.json(user);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la mise à jour de l'utilisateur." });
   }
 });
 
-app.delete("/users/:id", async (req, res) => {
-  const { id } = req.params;
+app.delete("/users/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
   try {
-    await prisma.user.delete({
-      where: { id: Number(id) },
+    await prisma.user.delete({ where: { id } });
+    res.json({ message: "Utilisateur supprimé" });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la suppression de l'utilisateur." });
+  }
+});
+
+// Routes Denonciation
+app.post("/denonciations", async (req: Request, res: Response) => {
+  const { description, categorie, localisation, name, mots_cles } = req.body;
+  try {
+    const denonciation = await prisma.denonciation.create({
+      data: { description, categorie, localisation, name, mots_cles },
     });
-    res.json({ message: "User deleted" });
+    res.json(denonciation);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la création de la dénonciation." });
   }
 });
 
-// Routes Blog
-app.post("/blogs", async (req, res) => {
-  const { title, content, authorId, published } = req.body;
+app.get("/denonciations", async (req: Request, res: Response) => {
   try {
-    const blog = await prisma.blog.create({
-      data: { title, content, authorId: Number(authorId), published },
+    const denonciations = await prisma.denonciation.findMany();
+    res.json(denonciations);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la récupération des dénonciations." });
+  }
+});
+
+app.get("/denonciations/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  try {
+    const denonciation = await prisma.denonciation.findUnique({
+      where: { id },
     });
-    res.json(blog);
+    if (denonciation) res.json(denonciation);
+    else res.status(404).json({ error: "Dénonciation non trouvée" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la récupération de la dénonciation." });
   }
 });
 
-app.get("/blogs", async (req, res) => {
+app.put("/denonciations/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const { description, categorie, localisation, name, mots_cles } = req.body;
   try {
-    const blogs = await prisma.blog.findMany({
-      include: { author: true },
+    const denonciation = await prisma.denonciation.update({
+      where: { id },
+      data: { description, categorie, localisation, name, mots_cles },
     });
-    res.json(blogs);
+    res.json(denonciation);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la mise à jour de la dénonciation." });
   }
 });
 
-app.get("/blogs/:id", async (req, res) => {
-  const { id } = req.params;
+app.delete("/denonciations/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
   try {
-    const blog = await prisma.blog.findUnique({
-      where: { id: Number(id) },
-      include: { author: true },
-    });
-    if (blog) {
-      res.json(blog);
-    } else {
-      res.status(404).json({ error: "Blog not found" });
-    }
+    await prisma.denonciation.delete({ where: { id } });
+    res.json({ message: "Dénonciation supprimée" });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(400)
+      .json({ error: "Erreur lors de la suppression de la dénonciation." });
   }
 });
 
-app.put("/blogs/:id", async (req, res) => {
-  const { id } = req.params;
-  const { title, content, published } = req.body;
-  try {
-    const blog = await prisma.blog.update({
-      where: { id: Number(id) },
-      data: { title, content, published },
-    });
-    res.json(blog);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+// Démarrer le serveur
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Serveur en écoute sur le port ${PORT}`);
 });
-
-app.delete("/blogs/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    await prisma.blog.delete({
-      where: { id: Number(id) },
-    });
-    res.json({ message: "Blog deleted" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Routes Manga
-app.post("/mangas", async (req, res) => {
-  const { title, author, description, price, stock } = req.body;
-  try {
-    const manga = await prisma.manga.create({
-      data: {
-        title,
-        author,
-        description,
-        price: Number(price),
-        stock: Number(stock),
-      },
-    });
-    res.json(manga);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.get("/mangas", async (req, res) => {
-  try {
-    const mangas = await prisma.manga.findMany();
-    res.json(mangas);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.get("/mangas/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const manga = await prisma.manga.findUnique({
-      where: { id: Number(id) },
-    });
-    if (manga) {
-      res.json(manga);
-    } else {
-      res.status(404).json({ error: "Manga not found" });
-    }
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.put("/mangas/:id", async (req, res) => {
-  const { id } = req.params;
-  const { title, author, description, price, stock } = req.body;
-  try {
-    const manga = await prisma.manga.update({
-      where: { id: Number(id) },
-      data: {
-        title,
-        author,
-        description,
-        price: Number(price),
-        stock: Number(stock),
-      },
-    });
-    res.json(manga);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.delete("/mangas/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    await prisma.manga.delete({
-      where: { id: Number(id) },
-    });
-    res.json({ message: "Manga deleted" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// Routes Anime
-app.post("/animes", async (req, res) => {
-  const { title, studio, episodes, description, price, stock } = req.body;
-  try {
-    const anime = await prisma.anime.create({
-      data: {
-        title,
-        studio,
-        episodes: Number(episodes),
-        description,
-        price: Number(price),
-        stock: Number(stock),
-      },
-    });
-    res.json(anime);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.get("/animes", async (req, res) => {
-  try {
-    const animes = await prisma.anime.findMany();
-    res.json(animes);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.get("/animes/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const anime = await prisma.anime.findUnique({
-      where: { id: Number(id) },
-    });
-    if (anime) {
-      res.json(anime);
-    } else {
-      res.status(404).json({ error: "Anime not found" });
-    }
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.put("/animes/:id", async (req, res) => {
-  const { id } = req.params;
-  const { title, studio, episodes, description, price, stock } = req.body;
-  try {
-    const anime = await prisma.anime.update({
-      where: { id: Number(id) },
-      data: {
-        title,
-        studio,
-        episodes: Number(episodes),
-        description,
-        price: Number(price),
-        stock: Number(stock),
-      },
-    });
-    res.json(anime);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-app.delete("/animes/:id", async (req, res) => {
-  const { id } = req.params;
-  try {
-    await prisma.anime.delete({
-      where: { id: Number(id) },
-    });
-    res.json({ message: "Anime deleted" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-export default app;

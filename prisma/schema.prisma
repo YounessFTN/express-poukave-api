@@ -11,44 +11,18 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String   // Stores the hashed password
-  name      String?
-  blogs     Blog[]
-}model Blog {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  image     String?  // URL de l'image du blog
-  published Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String  // Stores the hashed password
+  name     String?
 }
 
-model Manga {
-  id          Int      @id @default(autoincrement())
-  title       String   @unique
-  author      String
-  description String?
-  image       String?  // URL de l'image du manga
-  price       Decimal  @db.Decimal(10, 2)
-  stock       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Anime {
-  id          Int      @id @default(autoincrement())
-  title       String   @unique
-  studio      String
-  episodes    Int
-  description String?
-  image       String?  // URL de l'image de l'anime
-  price       Decimal  @db.Decimal(10, 2)
-  stock       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Denonciation {
+  id           Int      @id @default(autoincrement())
+  description  String
+  categorie    String
+  localisation String
+  date         DateTime @default(now())
+  name         String
+  mots_cles    String[]
 }
